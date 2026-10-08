@@ -9,6 +9,7 @@ public class QueueImpl<E> implements Queue<E>{
     public QueueImpl(int len) {
         // TO-DO
         this.data = (E[])new Object[len];
+        this.p = 0;
         logger.info("nova cua de " + len+" elements");
 
     }
@@ -21,7 +22,8 @@ public class QueueImpl<E> implements Queue<E>{
             throw new FullQueueException();
         }
 
-        this.data[this.p++]=e;
+        this.data[this.p] = e;
+        this.p++;
         logger.info("post: nou element "+ e);
 
     }
@@ -30,18 +32,35 @@ public class QueueImpl<E> implements Queue<E>{
     public E pop() throws EmptyQueueException {
         // TO-DO
         logger.info("pre: 'pop' nou element ");
-        return null;
+
+        if (this.isEmpty()) {
+            logger.error("Cua buida");
+            throw new EmptyQueueException();
+        }
+
+        E first_element_in_queue = this.data[0];
+
+        for (int i = 0; i < this.p - 1; i++) {
+            this.data[i] = this.data[i + 1];
+
+        }
+
+        this.p--;
+        this.data[this.p] = null;
+        logger.info("post: nou element extret "+ first_element_in_queue);
+
+        return first_element_in_queue;
+
     }
 
     private boolean isFull() {
         // TO-DO
-        //return this.p == this.data.length;
-        return false;
+        return this.p == this.data.length;
     }
 
     private boolean isEmpty() {
         // TO-DO
-        return false;
+        return this.p == 0;
     }
 
     public int size() {
